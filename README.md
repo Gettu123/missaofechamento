@@ -1,23 +1,20 @@
-# Missão: Fechamento — Desafio da Conciliação
+# 🎯 Missão: Fecho de Rubricas
 
-Jogo HTML completo e independente para treinamento de raciocínio sobre Rubricas, Contabilidade e Conciliação no SAP.
+Um minijogo interativo desenvolvido em HTML, CSS e JavaScript desenhado para testar conhecimentos sobre auditoria, fecho de folha e conciliação. O projeto destaca-se pela utilização de um avatar animado em vídeo, com remoção de fundo verde (Chroma Key) em tempo real através da API Canvas, que reage dinâmica e emocionalmente às respostas do utilizador.
 
-## Rodar
-Extraia o ZIP e abra `index.html`.
+## ✨ Funcionalidades
+* **Sistema de Quiz de Auditoria:** Cenários práticos sobre conciliação, regras de negócio e rastreabilidade de dados.
+* **Gamificação Integrada:** Contagem de pontos, bónus de sequência (streak), sistema de vidas finitas e penalizações por dicas.
+* **Avatar Interativo (Máquina de Estados):** O vídeo do personagem transita de forma fluida entre diferentes segmentos (Espera/Ocioso, Sucesso, Erro) consoante a ação do jogador.
+* **Chroma Key via JS:** Processamento de pixéis em tempo real no *frontend* para tornar o fundo verde do vídeo transparente, sobrepondo-o à interface.
+* **Totalmente Client-Side:** Não requer servidor backend ou base de dados para a jogabilidade principal.
 
-## GitHub Pages
-1. Crie um repositório no GitHub.
-2. Envie `index.html` e a pasta `assets`.
-3. Vá em Settings → Pages.
-4. Selecione a branch principal e a pasta `/root`.
-5. Salve. O GitHub Pages publicará o jogo.
+## 📁 Estrutura de Ficheiros
+Para que a aplicação funcione corretamente, a estrutura do repositório deve ser a seguinte:
 
-## Recursos
-- 8 fases
-- 3 vidas
-- pontuação e sequência
-- dicas
-- reações do personagem
-- teclado A/B/C/D
-- responsivo para celular
-- funciona sem servidor e sem dependências externas
+```text
+missao-fechamento/
+├── index.html
+└── assets/
+    ├── 1000910734.mp4 (Vídeo da animação com fundo verde)
+    └── marcelo_avatar.png (Imagem de fallback)
