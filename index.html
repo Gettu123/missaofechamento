@@ -1,50 +1,222 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Missão: Fechamento</title>
+<style>
+body{margin:0;background:#071426;color:#fff;font-family:Arial,sans-serif}.wrap{max-width:1050px;margin:auto;padding:18px}
+header{display:flex;justify-content:space-between;gap:15px;align-items:center}.stats{display:flex;gap:8px}.stat{background:#102943;border:1px solid #315777;border-radius:12px;padding:8px 14px;text-align:center}.stat b{display:block;font-size:20px}.stat span{font-size:10px;color:#aac0d4}
+.card{margin-
 
-let box=$("answers");box.innerHTML="";
-    x[4].forEach((t,n)=>{
-        let b=document.createElement("button");
-        b.className="answer";
-        b.innerHTML="<span class='letter'>"+String.fromCharCode(65+n)+"</span>"+t;
-        b.onclick=()=>answer(n);
-        box.appendChild(b)
-    });
-    stats()
+top:15px;background:#102943;border:1px solid #315777;border-radius:20px;overflow:hidden}.grid{display:grid;grid-template-columns:300px 1fr}
+.hero{display:flex;align-items:center;justify-content:center;padding:18px;background:#0b2035; position: relative;}
+.hero canvas {max-width: 100%; max-height: 400px; border-radius: 15px; object-fit: contain;}
+.fallback{font-size:100px}
+.main{padding:24px}.tag{background:#17486f;color:#8ed6ff;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}.main h2{font-size:32px;margin:12px 0 8px}.story{color:#d5e3ef;line-height:1.5}.progress{height:8px;background:#06111d;border-radius:10px;margin:16px 0}.bar{height:100%;background:#55b7ff;width:0;border-
+
+radius:10px}.question{background:#071a2c;border:1px solid #285276;padding:17px;border-radius:14px;font-size:18px;font-weight:bold}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.answer{background:#153452;color:#fff;border:1px solid #38617f;border-radius:12px;padding:14px;text-align:left;cursor:pointer}.answer:hover{border-color:#62c0ff}.answer.correct{border-color:#35d07f;background:#123c2c}.answer.wrong{border-color:#ff5f6d;background:#45232b}.letter{display:inline-grid;place-items:center;width:27px;height:27px;background:#255476;border-radius:7px;margin-right:7px;font-weight:bold}.actions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:11px 15px;font-
+
+weight:bold;cursor:pointer}.primary{background:#ffd166}.secondary{background:#1a4668;color:#fff}.danger{background:#69303a;color:#fff}.feedback{display:none;margin-top:14px;padding:13px;border-radius:12px;line-height:1.45}.show{display:block}.ok{border:1px solid #35d07f;background:#123c2c}.bad{border:1px solid #ff5f6d;background:#45232b}.reaction{display:flex;gap:12px;align-items:center;margin-top:14px;color:#cfe0ef;min-height:48px}.face{font-size:40px}.footer{text-align:center;color:#7892aa;font-size:12px;padding:15px}.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modalbox{max-width:600px;background:#102943;border:1px 
+
+solid #4b7597;border-radius:20px;padding:28px;text-align:center}.final{font-size:48px;color:#ffd166;font-weight:bold}
+@media(max-width:720px){header,.grid{display:block}.stats{margin-top:10px}.hero{min-height:170px}.answers{grid-template-columns:1fr}.main{padding:18px}}
+</style></head>
+<body><div class="wrap">
+<header><div><h1>🎯 MISSÃO: FECHAMENTO</h1><div style="color:#aac0d4">Rubricas • Contabilidade • Conciliação no SAP</div></div>
+<div class="stats"><div class="stat"><b id="score">0</b><span>PONTOS</span></div><div class="stat"><b id="lives">❤️❤️❤️</b><span>VIDAS</span></div><div class="stat"><b id="streak">0</b><span>SEQUÊNCIA</span></div></div></header>
+<div class="card"><div class="grid">
+
+
+<div class="hero">
+<video id="avatar-video" src="assets/1000910734.mp4" muted playsinline style="display:none;" crossorigin="anonymous"></video>
+<canvas id="video-canvas" width="360" height="640"></canvas>
+<img id="fallback-img" src="assets/marcelo_avatar.png" style="display:none; max-width: 100%; max-height: 270px; border-radius: 15px;">
+<div id="fallback" class="fallback" style="display:none">🧑‍💻</div>
+</div>
+
+<div class="main"><span class="tag" id="phase"></span><h2 id="title"></h2><div class="story" id="story"></div><div class="progress"><div id="bar" class="bar"></
+
+div></div><div class="question" id="question"></div><div id="answers" class="answers"></div>
+<div class="actions"><button class="btn secondary" id="hint">💡 Dica (-20)</button><button class="btn primary" id="next" disabled>➡️ Próximo</button><button class="btn danger" id="reset">↻ Reiniciar</button></div>
+<div id="feedback" class="feedback"></div><div class="reaction"><div id="face" class="face">🤔</div><div id="react">Analise a trilha antes de responder.</div></div></div></div></div>
+<div class="footer">Jogo independente: não precisa de SAP, servidor ou internet.</div></div>
+<div id="modal" class="modal"><div class="modalbox"><div style="font-size:65px">🏆</div><h2>Fechamento concluído!</h2><p>Você percorreu a trilha Rubrica → Contabilidade → Conciliação.</p><div id="final" class="final">0</div><p id="finalText"></p><button class="btn 
+
+primary" onclick="restart()">Jogar novamente</button></div></div>
+<script>
+const C=[
+["FASE 1 • RUBRICA","A diferença nasceu onde?","A Folha totalizou R
+ 
+ 1.217.450,00. Antes de corrigir valores, descubra onde a diferença nasceu.","Qual é a primeira trilha de investigação?",["Alterar o valor diretamente na conta contábil.","Rastrear rubrica → conta simbólica → determinação → conta contábil.","Reprocessar toda a folha imediatamente.","Excluir o documento contábil e gerar outro."],1,"A investigação começa na origem. Se a rubrica está correta, siga a determinação contábil até a conta do razão.","Não comece pela conta final. Volte uma camada: rubrica e determinação."],
+
+["FASE 2 • DETERMINAÇÃO","A rubrica está certa. A conta não.","O valor da rubrica bate com a Folha, mas foi parar em uma conta diferente da esperada.","O que deve ser validado primeiro?",["Somente o nome da conta no FI.","Conta bancária do empregado.","Conta simbólica e regra de determinação contábil da rubrica.","Cadastro de endereço."],2,"A ponte entre Folha e FI passa pela conta simbólica e pela determinação contábil.","Pense na ponte entre Folha e FI."],
+["FASE 3 • CENTRO DE CUSTO","O valor fecha. O centro não.","A despesa total está correta, mas R
+ 
+ 72.400,00. A cobrança do fornecedor chegou a R
+ 
+ 96.000,00, mas ainda existe saldo de provisão de R$` 41.500,00.","Qual trilha deve ser conferida?",["Somente a conta bancária.","Provisão, realização, reversão, encargos e competência.","Somente o holerite.","Trocar o 
+
+centro de custo."],1,"O saldo residual pode decorrer de competência, encargos, reversões ou diferença entre provisionado e realizado.","Provisão tem um ciclo: reconhecimento, realização e reversão."],
+["FASE 6 • COMPETÊNCIA","Competência diferente","Um valor aparece na Folha de setembro, mas a despesa gerencial foi analisada como se fosse de outubro. O pagamento ocorrerá em outra data.","Como organizar a análise?",["Misturar competência e pagamento.","Separar competência, provisão, realização e pagamento.","Considerar somente a data bancária.","Excluir o lançamento antigo."],1,"Uma conciliação robusta separa o momento econômico de provisão, realização e pagamento.","Pergunte: de que competência é o fato e quando ele foi pago?"],
+["FASE 7 • TESOURARIA","O arquivo está certo... será?","A Folha fechou. O arquivo bancário está 
+
+pronto, mas um beneficiário apresenta dados bancários divergentes.","Qual atitude evita que um erro vire pagamento?",["Enviar porque a Folha já fechou.","Bloquear o envio e validar banco, agência, conta, beneficiário e origem.","Corrigir o arquivo sem rastreabilidade.","Ignorar e conferir depois."],1,"Conciliação também é preventiva: uma divergência antes do envio pode evitar pagamento incorreto.","Fechamento da Folha não significa autorização automática para pagar."],
+["FASE 8 • FECHAMENTO","A trilha completa","Chegou a hora do fechamento. Um valor precisa ser explicado de ponta a ponta, do cálculo até o reflexo financeiro.","Qual trilha representa uma conciliação completa?",["Rubrica → conta contábil e parar.","Rubrica → determinação → conta → centro/rateio → fornecedor/provisão → FI → 
+
+pagamento.","Somente Folha → banco.","Somente conta contábil → fornecedor."],1,"A trilha completa conecta origem, regra, contabilidade, dimensão gerencial, obrigações e pagamento.","A pergunta-mestra é: de onde veio esse valor e onde deveria terminar?"]
+];
+
+let i=0,score=0,lives=3,streak=0,done=false,hinted=false;
+const `$=x=>document.getElementById(x);
+
+// LÓGICA DO VÍDEO
+const video = document.getElementById('avatar-video');
+const canvas = document.getElementById('video-canvas');
+const ctx = canvas.getContext('2d', { 
+
+willReadFrequently: true });
+let videoState = 'IDLE';
+
+const videoSegments = {
+'IDLE': { start: 0.0, end: 5.0, loop: true },
+ 'SUCCESS': { start: 5.2, end: 7.0, loop: false },
+'ERROR': { start: 7.5, end: 9.0, loop: false }
+ };
+
+function changeAvatarState(state) {
+videoState = state;
+video.currentTime = videoSegments[state].start;
+video.play().catch(e => {
+// Fallback se o navegador bloquear autoplay de vídeo
+canvas.style.display = 'none';
+$`("fallback-img").style.display = 'block';
+});
+}
+
+video.addEventListener('timeupdate', () => {
+const seg = videoSegments[videoState];
+if (video.currentTime >= seg.end) {
+if (seg.loop) {
+video.currentTime = seg.start;
+} else {
+video.pause();
+}
+}
+});
+
+function renderVideoToCanvas() {
+if (!video.paused && !video.ended) {
+ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+let frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+let l = frame.data.length / 4;
+
+for (let j = 0; j < l; j++) {
+
+let r = frame.data[j * 4 + 0];
+let g = frame.data[j * 4 + 1];
+let b = frame.data[j * 4 + 2];
+if (g > 90 && g > r * 1.2 && g > b * 1.2) {
+frame.data[j * 4 + 3] = 0;
+}
+}
+ctx.putImageData(frame, 0, 0);
+}
+requestAnimationFrame(renderVideoToCanvas);
+}
+
+video.addEventListener('play', () => {
+`$("fallback-img").style.display = 'none';
+canvas.style.display = 'block';
+renderVideoToCanvas();
+});
+
+window.onload = () => {
+video.load();
+
+changeAvatarState('IDLE');
+};
+
+function render(){
+let x=C[i];done=false;hinted=false;
+ 
+("title").textContent=x[1];
+ 
+("question").textContent=x[3];
+ 
+("feedback").className="feedback";
+ 
+("next").disabled=true;
+ 
+("face").textContent="🤔";$`("react").textContent="Analise a trilha antes de responder.";
+
+changeAvatarState('IDLE');
+
+let box=`$("answers");box.innerHTML="";
+x[4].forEach((t,n)=>{
+let b=document.createElement("button");
+b.className="answer";
+b.innerHTML="<span class='letter'>"+String.fromCharCode(65+n)+"</span>"+t;
+b.onclick=()=>answer(n);
+box.appendChild(b)
+});
+stats()
 }
 
 function answer(n){
-    if(done)return;done=true;
-    let x=C[i],bs=document.querySelectorAll(".answer");
-    bs.forEach(b=>b.disabled=true);
+if(done)return;done=true;
+let x=C[i],bs=document.querySelectorAll(".answer");
+bs.forEach(b=>b.disabled=true);
 
-    if(n===x[5]){
-        bs[n].classList.add("correct");
-        let p=100+streak*15-(hinted?20:0);score+=Math.max(20,p);streak++;
-        $("feedback").className="feedback show ok";$("feedback").innerHTML="<b>✅ CORRETO!</b> "+x[6];
-        $("face").textContent="😎";$("react").innerHTML="<b>Boa!</b> Você encontrou a trilha certa.";
-        changeAvatarState('SUCCESS');
-    }else{
-        lives--;streak=0;
-        bs[n].classList.add("wrong");bs[x[5]].classList.add("correct");
-        $("feedback").className="feedback show bad";$("feedback").innerHTML="<b>❌ NÃO FECHA.</b> "+x[6];
-        $("face").textContent=lives?"😵":"😱";$("react").textContent="Volte para a origem do lançamento.";
-        changeAvatarState('ERROR');
-    }
-    $("next").disabled=false;$("hint").disabled=true;stats();
-    if(lives<=0)setTimeout(()=>finish(true),500)
+
+if(n===x[5]){
+bs[n].classList.add("correct");
+let p=100+streak*15-(hinted?20:0);score+=Math.max(20,p);streak++;
+ 
+("feedback").innerHTML="<b>✅ CORRETO!</b> "+x[6];
+ 
+("react").innerHTML="<b>Boa!</b> Você encontrou a trilha certa.";
+changeAvatarState('SUCCESS');
+}else{
+lives--;streak=0;
+bs[n].classList.add("wrong");bs[x[5]].classList.add("correct");
+ 
+("feedback").innerHTML="<b>❌ NÃO FECHA.</b> 
+
+"+x[6];
+ 
+("react").textContent="Volte para a origem do lançamento.";
+changeAvatarState('ERROR');
+}
+ 
+("hint").disabled=true;stats();
+if(lives<=0)setTimeout(()=>finish(true),500)
 }
 
-function stats(){$("score").textContent=score;$("lives").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);$("streak").textContent=streak}
+function stats(){
+ 
+("lives").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);$`("streak").textContent=streak}
 
-$("hint").onclick=()=>{if(donehintedscore<20)return;score-=20;hinted=true;$("feedback").className="feedback show";$("feedback").innerHTML="💡 <b>DICA:</b> "+C[i][7];$("hint").disabled=true;stats()}
-$("next").onclick=()=>{if(i<C.length-1){i++;render()}else finish(false)}
+$("hint").onclick=()=&gt;{if(done||hinted||
 
-function finish(lost){$("bar").style.width="100%";$("final").textContent=score+" pontos";$("finalText").textContent=lost?"As 3 vidas acabaram. Revise a trilha e tente novamente.":"Você concluiu a Missão: Fechamento.";$("modal").className="modal show"}
-function restart(){$("modal").className="modal";i=0;score=0;lives=3;streak=0;render()}
-$("reset").onclick=restart;
+score&lt;20)return;score-=20;hinted=true;$("feedback").className="feedback show";$("feedback").innerHTML="💡 &lt;b&gt;DICA:&lt;/b&gt; "+C[i][7];$("hint").disabled=true;stats()}
+`$("next").onclick=()=>{if(i<C.length-1){i++;render()}else finish(false)}
+
+function finish(lost){
+ 
+("final").textContent=score+" pontos";
+ 
+("modal").className="modal show"}
+function restart(){
+ 
+("reset").onclick=restart;
+
 
 document.addEventListener("keydown",e=>{
-    let k=e.key.toLowerCase();
-    if("abcd".includes(k)&&!done){answer(k.charCodeAt(0)-97)}
-    if(e.key==="Enter"&&!$("next").disabled)$("next").click()
+let k=e.key.toLowerCase();
+if("abcd".includes(k)&&!done){answer(k.charCodeAt(0)-97)}
+if(e.key==="Enter"&&!
+ 
+("next").click()
 });
 render();
 </script></body></html>
