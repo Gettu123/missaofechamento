@@ -1,1 +1,50 @@
 
+let box=$("answers");box.innerHTML="";
+    x[4].forEach((t,n)=>{
+        let b=document.createElement("button");
+        b.className="answer";
+        b.innerHTML="<span class='letter'>"+String.fromCharCode(65+n)+"</span>"+t;
+        b.onclick=()=>answer(n);
+        box.appendChild(b)
+    });
+    stats()
+}
+
+function answer(n){
+    if(done)return;done=true;
+    let x=C[i],bs=document.querySelectorAll(".answer");
+    bs.forEach(b=>b.disabled=true);
+
+    if(n===x[5]){
+        bs[n].classList.add("correct");
+        let p=100+streak*15-(hinted?20:0);score+=Math.max(20,p);streak++;
+        $("feedback").className="feedback show ok";$("feedback").innerHTML="<b>✅ CORRETO!</b> "+x[6];
+        $("face").textContent="😎";$("react").innerHTML="<b>Boa!</b> Você encontrou a trilha certa.";
+        changeAvatarState('SUCCESS');
+    }else{
+        lives--;streak=0;
+        bs[n].classList.add("wrong");bs[x[5]].classList.add("correct");
+        $("feedback").className="feedback show bad";$("feedback").innerHTML="<b>❌ NÃO FECHA.</b> "+x[6];
+        $("face").textContent=lives?"😵":"😱";$("react").textContent="Volte para a origem do lançamento.";
+        changeAvatarState('ERROR');
+    }
+    $("next").disabled=false;$("hint").disabled=true;stats();
+    if(lives<=0)setTimeout(()=>finish(true),500)
+}
+
+function stats(){$("score").textContent=score;$("lives").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);$("streak").textContent=streak}
+
+$("hint").onclick=()=>{if(donehintedscore<20)return;score-=20;hinted=true;$("feedback").className="feedback show";$("feedback").innerHTML="💡 <b>DICA:</b> "+C[i][7];$("hint").disabled=true;stats()}
+$("next").onclick=()=>{if(i<C.length-1){i++;render()}else finish(false)}
+
+function finish(lost){$("bar").style.width="100%";$("final").textContent=score+" pontos";$("finalText").textContent=lost?"As 3 vidas acabaram. Revise a trilha e tente novamente.":"Você concluiu a Missão: Fechamento.";$("modal").className="modal show"}
+function restart(){$("modal").className="modal";i=0;score=0;lives=3;streak=0;render()}
+$("reset").onclick=restart;
+
+document.addEventListener("keydown",e=>{
+    let k=e.key.toLowerCase();
+    if("abcd".includes(k)&&!done){answer(k.charCodeAt(0)-97)}
+    if(e.key==="Enter"&&!$("next").disabled)$("next").click()
+});
+render();
+</script></body></html>
